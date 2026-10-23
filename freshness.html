@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freshness Checker — KAALO Coffee Roasters</title>
+<meta name="description" content="Enter the roast date stamped on your KAALO bag and check it against the 7–21 day window — the same maths the roastery uses.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a class="wordmark" href="index.html">KAALO</a>
+    <div class="nav-links">
+      <a href="roast-log.html">Roast Log</a>
+      <a href="freshness.html" class="active">Freshness</a>
+      <a href="prices.html">Prices</a>
+      <a class="action" href="prices.html#order">Order</a>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <span class="stamp">Rest 7 days · Brew by day 21</span>
+    <h1>Is your bag in the window?</h1>
+    <p>Coffee needs rest, then it has a peak. Enter the date stamped on your bag — this is the same maths we use at the roastery, not a marketing version of it.</p>
+  </header>
+
+</div>
+
+<section class="checker" style="margin-top:40px">
+  <div class="checker-grid">
+    <div>
+      <form class="checker-form" id="freshForm" style="margin-top:0">
+        <div>
+          <label for="roastDate">Roast date on your bag</label>
+          <input type="date" id="roastDate" value="2026-10-15" required>
+        </div>
+        <button class="check" type="submit">Check</button>
+      </form>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+    </div>
+    <figure class="log-photo">
+      <img src="img/beans-web.jpg" alt="Ground coffee with a single whole bean on top">
+      <figcaption><span>Fig. 02 — Ground to order</span><span>Whole · Espresso · Filter</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <section>
+    <div class="sec-head">
+      <h2>The three states of a bag</h2>
+      <p>No bag is “fresh” forever, and a just-roasted bag isn't ready either. Honest version:</p>
+    </div>
+    <div class="state-row">
+      <div class="when">Days 0–6</div>
+      <div class="what">Resting <span>Still releasing gas from the roast. The cup tastes sharp and thin — this is why this week's batch isn't on sale yet.</span></div>
+    </div>
+    <div class="state-row">
+      <div class="when">Days 7–21</div>
+      <div class="what">In the window <span>The peak stretch. Everything the lot has to say, it says now. We plan dispatch so your bag lands at the start of this window.</span></div>
+    </div>
+    <div class="state-row">
+      <div class="when">Day 22 +</div>
+      <div class="what">Past peak <span>Still drinkable, honestly — but flatter week by week. Ground coffee fades faster; whole beans keep a little longer.</span></div>
+    </div>
+    <a class="more-link" href="roast-log.html">See which batches are in the window now →</a>
+  </section>
+
+  <footer class="site-foot">
+    <div>
+      <a class="wordmark" href="index.html">KAALO</a>
+      <p class="credits" style="margin-top:12px">Demo concept built by Wafa for Tiyan Degital — business details are illustrative.</p>
+    </div>
+    <div class="foot-links">
+      <a href="index.html">Home</a>
+      <a href="roast-log.html">Roast Log</a>
+      <a href="prices.html">Prices</a>
+      <a href="prices.html#order">Order</a>
+    </div>
+  </footer>
+
+</div>
+<script>
+  const form = document.getElementById('freshForm');
+  const out = document.getElementById('verdict');
+  function check(){
+    const v = document.getElementById('roastDate').value;
+    if(!v){ out.innerHTML = '<p class="msg">Pick the date stamped on your bag first.</p>'; return; }
+    const roast = new Date(v + 'T00:00:00');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const days = Math.round((today - roast) / 86400000);
+    let msg;
+    if(days < 0){ msg = '<span class="warn"><b>That date is in the future.</b></span> Check the stamp again — or you have next week\u2019s bag before we do.'; }
+    else if(days < 7){ msg = '<b>Too fresh — let it rest.</b> The beans are still releasing gas; the cup will taste sharp and thin. Best from day 7 (' + new Date(roast.getTime() + 7*86400000).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ').'; }
+    else if(days <= 21){ msg = '<b>In the window — brew now.</b> This is the peak stretch. Finish the bag by day 21 for the best of it.'; }
+    else { msg = '<span class="warn"><b>Past peak.</b></span> Still drinkable, honestly — but flatter. Next Thursday\u2019s roast will beat it.'; }
+    out.innerHTML = '<div class="days">' + Math.max(days,0) + ' <small>' + (days===1?'day':'days') + ' since roast</small></div><p class="msg">' + msg + '</p>';
+  }
+  form.addEventListener('submit', function(e){ e.preventDefault(); check(); });
+  check();
+</script>
+</body>
+</html>
